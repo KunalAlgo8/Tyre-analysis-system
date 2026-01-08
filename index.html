@@ -496,28 +496,389 @@
                         </div>
                     </div>
                     
-                    <div id="recipeWarning" class="bg-yellow-50 border-2 border-yellow-300 rounded p-4 mb-4">
-                        <p class="text-sm text-gray-700 text-center">
-                            <strong>Note:</strong> Please select a recipe from the dropdown above to view Master Data and Measured Data comparison.
-                        </p>
+                    <!-- Recipe Overview Table (shown when no recipe selected) -->
+                    <div id="recipeSelectionView" class="bg-white rounded-lg">
+                        <div class="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+                                <p class="text-sm text-blue-700">
+                                    <strong>Available Recipes</strong> - Hover over data columns to view detailed parameters. Click on a recipe row to view full details.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-200">
+                                        <th class="border-2 border-gray-300 p-3 text-left w-1/6">Recipe Name</th>
+                                        <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-blue-50">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <span>Master Data</span>
+                                                <i data-lucide="info" class="w-4 h-4 text-gray-500"></i>
+                                            </div>
+                                            <span class="text-xs font-normal text-gray-600">(Hover for details)</span>
+                                        </th>
+                                        <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-green-50">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <span>Section 1</span>
+                                                <i data-lucide="info" class="w-4 h-4 text-gray-500"></i>
+                                            </div>
+                                            <span class="text-xs font-normal text-gray-600">(Hover for details)</span>
+                                        </th>
+                                        <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-green-50">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <span>Section 2</span>
+                                                <i data-lucide="info" class="w-4 h-4 text-gray-500"></i>
+                                            </div>
+                                            <span class="text-xs font-normal text-gray-600">(Hover for details)</span>
+                                        </th>
+                                        <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-green-50">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <span>Section 3</span>
+                                                <i data-lucide="info" class="w-4 h-4 text-gray-500"></i>
+                                            </div>
+                                            <span class="text-xs font-normal text-gray-600">(Hover for details)</span>
+                                        </th>
+                                        <th class="border-2 border-gray-300 p-3 text-center w-1/6">Overall Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Recipe A -->
+                                    <tr class="hover:bg-blue-50 cursor-pointer transition-colors" onclick="selectRecipeCard('recipe-a')">
+                                        <td class="border-2 border-gray-300 p-3">
+                                            <div class="font-bold text-gray-800">Recipe A</div>
+                                            <div class="text-sm text-gray-600">Standard Compound</div>
+                                            <div class="text-xs text-gray-500 mt-1">44 Parameters</div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-blue-50 relative group">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="database" class="w-6 h-6 text-blue-600"></i>
+                                                <span class="text-xs text-gray-600">Target Specs</span>
+                                            </div>
+                                            <!-- Tooltip -->
+                                            <div class="hidden group-hover:block absolute z-50 left-0 top-full mt-2 w-80 bg-white border-2 border-gray-300 rounded-lg shadow-xl p-3 text-left">
+                                                <div class="font-bold text-sm mb-2 text-gray-800">Sample Parameters (Master Data)</div>
+                                                <div class="text-xs space-y-1 max-h-60 overflow-y-auto">
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Overall Tread Center Gauge:</span>
+                                                        <span class="font-medium">12.5mm ±0.5</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Overall Shoulder Gauge SS:</span>
+                                                        <span class="font-medium">11.0mm ±0.4</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Tread Center Rubber Gauge:</span>
+                                                        <span class="font-medium">8.5mm ±0.3</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Belt 1 Width:</span>
+                                                        <span class="font-medium">165mm ±2</span>
+                                                    </div>
+                                                    <div class="text-center text-gray-500 italic mt-2">+ 40 more parameters</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50 relative group">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                            <!-- Tooltip -->
+                                            <div class="hidden group-hover:block absolute z-50 left-0 top-full mt-2 w-80 bg-white border-2 border-gray-300 rounded-lg shadow-xl p-3 text-left">
+                                                <div class="font-bold text-sm mb-2 text-gray-800">Sample Measurements (Section 1)</div>
+                                                <div class="text-xs space-y-1 max-h-60 overflow-y-auto">
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Overall Tread Center Gauge:</span>
+                                                        <span class="font-medium text-green-700">12.6mm</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Overall Shoulder Gauge SS:</span>
+                                                        <span class="font-medium text-green-700">11.2mm</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Tread Center Rubber Gauge:</span>
+                                                        <span class="font-medium text-green-700">8.5mm</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Belt 1 Width:</span>
+                                                        <span class="font-medium text-green-700">165.5mm</span>
+                                                    </div>
+                                                    <div class="text-center text-gray-500 italic mt-2">+ 40 more measurements</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50 relative group">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                            <!-- Tooltip -->
+                                            <div class="hidden group-hover:block absolute z-50 left-0 top-full mt-2 w-80 bg-white border-2 border-gray-300 rounded-lg shadow-xl p-3 text-left">
+                                                <div class="font-bold text-sm mb-2 text-gray-800">Sample Measurements (Section 2)</div>
+                                                <div class="text-xs space-y-1 max-h-60 overflow-y-auto">
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Overall Tread Center Gauge:</span>
+                                                        <span class="font-medium text-green-700">12.7mm</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Overall Shoulder Gauge SS:</span>
+                                                        <span class="font-medium text-green-700">11.3mm</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Tread Center Rubber Gauge:</span>
+                                                        <span class="font-medium text-green-700">8.6mm</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Belt 1 Width:</span>
+                                                        <span class="font-medium text-green-700">166mm</span>
+                                                    </div>
+                                                    <div class="text-center text-gray-500 italic mt-2">+ 40 more measurements</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50 relative group">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                            <!-- Tooltip -->
+                                            <div class="hidden group-hover:block absolute z-50 left-0 top-full mt-2 w-80 bg-white border-2 border-gray-300 rounded-lg shadow-xl p-3 text-left">
+                                                <div class="font-bold text-sm mb-2 text-gray-800">Sample Measurements (Section 3)</div>
+                                                <div class="text-xs space-y-1 max-h-60 overflow-y-auto">
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Overall Tread Center Gauge:</span>
+                                                        <span class="font-medium text-green-700">12.6mm</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Overall Shoulder Gauge SS:</span>
+                                                        <span class="font-medium text-green-700">11.4mm</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Tread Center Rubber Gauge:</span>
+                                                        <span class="font-medium text-green-700">8.5mm</span>
+                                                    </div>
+                                                    <div class="flex justify-between py-1 border-b border-gray-200">
+                                                        <span class="text-gray-700">Belt 1 Width:</span>
+                                                        <span class="font-medium text-green-700">165.8mm</span>
+                                                    </div>
+                                                    <div class="text-center text-gray-500 italic mt-2">+ 40 more measurements</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center">
+                                            <span class="px-4 py-2 rounded font-bold text-white text-lg bg-green-600">A</span>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Recipe B -->
+                                    <tr class="hover:bg-blue-50 cursor-pointer transition-colors" onclick="selectRecipeCard('recipe-b')">
+                                        <td class="border-2 border-gray-300 p-3">
+                                            <div class="font-bold text-gray-800">Recipe B</div>
+                                            <div class="text-sm text-gray-600">High Performance</div>
+                                            <div class="text-xs text-gray-500 mt-1">44 Parameters</div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-blue-50 relative group">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="database" class="w-6 h-6 text-blue-600"></i>
+                                                <span class="text-xs text-gray-600">Target Specs</span>
+                                            </div>
+                                            <div class="hidden group-hover:block absolute z-50 left-0 top-full mt-2 w-80 bg-white border-2 border-gray-300 rounded-lg shadow-xl p-3 text-left">
+                                                <div class="font-bold text-sm mb-2 text-gray-800">Master Data Available</div>
+                                                <div class="text-xs text-gray-600">Click row to view all 44 parameters</div>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center">
+                                            <span class="px-4 py-2 rounded font-bold text-white text-lg bg-blue-600">B</span>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Recipe C -->
+                                    <tr class="hover:bg-blue-50 cursor-pointer transition-colors" onclick="selectRecipeCard('recipe-c')">
+                                        <td class="border-2 border-gray-300 p-3">
+                                            <div class="font-bold text-gray-800">Recipe C</div>
+                                            <div class="text-sm text-gray-600">All Weather</div>
+                                            <div class="text-xs text-gray-500 mt-1">44 Parameters</div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-blue-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="database" class="w-6 h-6 text-blue-600"></i>
+                                                <span class="text-xs text-gray-600">Target Specs</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center">
+                                            <span class="px-4 py-2 rounded font-bold text-white text-lg bg-yellow-600">C</span>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Recipe D -->
+                                    <tr class="hover:bg-blue-50 cursor-pointer transition-colors" onclick="selectRecipeCard('recipe-d')">
+                                        <td class="border-2 border-gray-300 p-3">
+                                            <div class="font-bold text-gray-800">Recipe D</div>
+                                            <div class="text-sm text-gray-600">Heavy Duty</div>
+                                            <div class="text-xs text-gray-500 mt-1">44 Parameters</div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-blue-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="database" class="w-6 h-6 text-blue-600"></i>
+                                                <span class="text-xs text-gray-600">Target Specs</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center">
+                                            <span class="px-4 py-2 rounded font-bold text-white text-lg bg-green-600">A</span>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Recipe E -->
+                                    <tr class="hover:bg-blue-50 cursor-pointer transition-colors" onclick="selectRecipeCard('recipe-e')">
+                                        <td class="border-2 border-gray-300 p-3">
+                                            <div class="font-bold text-gray-800">Recipe E</div>
+                                            <div class="text-sm text-gray-600">Eco Friendly</div>
+                                            <div class="text-xs text-gray-500 mt-1">44 Parameters</div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-blue-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="database" class="w-6 h-6 text-blue-600"></i>
+                                                <span class="text-xs text-gray-600">Target Specs</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center">
+                                            <span class="px-4 py-2 rounded font-bold text-white text-lg bg-blue-600">B</span>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Recipe F -->
+                                    <tr class="hover:bg-blue-50 cursor-pointer transition-colors" onclick="selectRecipeCard('recipe-f')">
+                                        <td class="border-2 border-gray-300 p-3">
+                                            <div class="font-bold text-gray-800">Recipe F</div>
+                                            <div class="text-sm text-gray-600">Winter Special</div>
+                                            <div class="text-xs text-gray-500 mt-1">44 Parameters</div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-blue-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="database" class="w-6 h-6 text-blue-600"></i>
+                                                <span class="text-xs text-gray-600">Target Specs</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50">
+                                            <div class="flex flex-col items-center gap-1">
+                                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                                <span class="text-xs text-gray-600">Measured</span>
+                                            </div>
+                                        </td>
+                                        <td class="border-2 border-gray-300 p-3 text-center">
+                                            <span class="px-4 py-2 rounded font-bold text-white text-lg bg-green-600">A</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="bg-gray-200">
-                                    <th class="border-2 border-gray-300 p-3 text-left w-1/6">Parameter Name</th>
-                                    <th class="border-2 border-gray-300 p-3 text-left w-1/6 bg-blue-50">Master Data (Target Specs)</th>
-                                    <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-green-50">Measured Data (Actual)<br>Section 1</th>
-                                    <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-green-50">Measured Data (Actual)<br>Section 2</th>
-                                    <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-green-50">Measured Data (Actual)<br>Section 3</th>
-                                    <th class="border-2 border-gray-300 p-3 text-center w-1/6">Overall Grade</th>
-                                </tr>
-                            </thead>
-                            <tbody id="parameterTableBody">
-                                <!-- Table rows will be populated by JavaScript -->
-                            </tbody>
-                        </table>
+                    <!-- Data Comparison Table (shown when recipe is selected) -->
+                    <div id="dataComparisonTable" class="hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-200">
+                                        <th class="border-2 border-gray-300 p-3 text-left w-1/6">Parameter Name</th>
+                                        <th class="border-2 border-gray-300 p-3 text-left w-1/6 bg-blue-50">Master Data (Target Specs)</th>
+                                        <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-green-50">Measured Data (Actual)<br>Section 1</th>
+                                        <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-green-50">Measured Data (Actual)<br>Section 2</th>
+                                        <th class="border-2 border-gray-300 p-3 text-center w-1/6 bg-green-50">Measured Data (Actual)<br>Section 3</th>
+                                        <th class="border-2 border-gray-300 p-3 text-center w-1/6">Overall Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="parameterTableBody">
+                                    <!-- Table rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 
@@ -870,6 +1231,12 @@
             updateVersionIndicator();
             updateDataComparisonView();
         }
+        
+        // Select recipe from card click
+        function selectRecipeCard(recipeId) {
+            document.getElementById('recipeSelect').value = recipeId;
+            handleRecipeChange();
+        }
 
         // Version change handler
         function handleVersionChange() {
@@ -953,7 +1320,8 @@
         // Update data comparison view
         function updateDataComparisonView() {
             const tableBody = document.getElementById('parameterTableBody');
-            const warning = document.getElementById('recipeWarning');
+            const recipeSelectionView = document.getElementById('recipeSelectionView');
+            const dataComparisonTable = document.getElementById('dataComparisonTable');
             const overallGradeContainer = document.getElementById('overallGradeContainer');
             
             // Get current version data (use v5 data for v3, v2, v1 as we only have v5 and v4 defined)
@@ -961,7 +1329,9 @@
             const allParameters = dataSource.parameters;
             
             if (selectedRecipe) {
-                warning.classList.add('hidden');
+                // Hide recipe selection, show data table
+                recipeSelectionView.classList.add('hidden');
+                dataComparisonTable.classList.remove('hidden');
                 overallGradeContainer.classList.remove('hidden');
                 
                 // Populate table
@@ -1033,22 +1403,10 @@
                 document.getElementById('overallGradeBadge').textContent = overallGrade;
                 document.getElementById('overallGradeBadge').className = `px-4 py-1 rounded font-bold text-white text-lg ${overallGradeBgColor}`;
             } else {
-                warning.classList.remove('hidden');
+                // Show recipe selection, hide data table
+                recipeSelectionView.classList.remove('hidden');
+                dataComparisonTable.classList.add('hidden');
                 overallGradeContainer.classList.add('hidden');
-                
-                // Clear table - show empty rows with three sections
-                tableBody.innerHTML = allParameters.map(param => `
-                    <tr class="hover:bg-gray-50">
-                        <td class="border-2 border-gray-300 p-3 font-medium">${param.name}</td>
-                        <td class="border-2 border-gray-300 p-3 bg-blue-50">-</td>
-                        <td class="border-2 border-gray-300 p-3 bg-green-50 text-center">-</td>
-                        <td class="border-2 border-gray-300 p-3 bg-green-50 text-center">-</td>
-                        <td class="border-2 border-gray-300 p-3 bg-green-50 text-center">-</td>
-                        <td class="border-2 border-gray-300 p-3 text-center">
-                            <span class="text-gray-400">-</span>
-                        </td>
-                    </tr>
-                `).join('');
                 
                 // Reset summary
                 document.getElementById('passedCount').textContent = '0/44';
@@ -1060,6 +1418,9 @@
                 document.getElementById('overallGrade').textContent = '-';
                 document.getElementById('overallStatus').textContent = 'No Recipe Selected';
             }
+            
+            // Reinitialize Lucide icons after DOM update
+            lucide.createIcons();
         }
 
         // Initialize the page
