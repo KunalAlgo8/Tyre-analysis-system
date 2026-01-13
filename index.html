@@ -19,43 +19,52 @@
             animation: pulse-border 2s ease-in-out infinite;
         }
         
-        /* Hover Popup Styles */
+        /* Hover Popup Styles - UPDATED */
         .hover-popup {
             position: absolute;
-            z-index: 100;
-            width: 350px;
+            z-index: 1000;
+            width: 380px;
             max-height: 400px;
             overflow-y: auto;
             background: white;
-            border: 2px solid #e5e7eb;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            padding: 12px;
             display: none;
-            pointer-events: none;
+            pointer-events: auto; /* Enable scrolling */
+            top: 80%; 
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: left;
         }
         
+        /* Make sure the parent holds the popup */
+        .hover-trigger {
+            position: relative;
+        }
+
         .hover-trigger:hover .hover-popup {
             display: block;
         }
         
         /* Custom scrollbar for popup */
         .hover-popup::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         
         .hover-popup::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
+            background: #f1f5f9;
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
         }
         
         .hover-popup::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 3px;
+            background: #94a3b8;
+            border-radius: 4px;
         }
         
         .hover-popup::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            background: #64748b;
         }
         
         /* Recipe row hover effect */
@@ -375,8 +384,8 @@
 
                 <!-- Main Work Area -->
                 <div id="rpscoeWorkArea" class="grid grid-cols-2 gap-6" style="display: none;">
-                    <!-- Parameters Panel -->
-                    <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex flex-col" style="height: calc(100vh - 280px);">
+                    <!-- Parameters Panel - Fixed Height for ~10 items scrollable -->
+                    <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex flex-col" style="height: 550px;">
                         <div class="bg-gradient-to-r from-gray-50 to-white p-4 border-b-2 border-gray-200">
                             <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                                 <i data-lucide="list-checks" class="w-5 h-5 text-blue-600"></i>
@@ -400,9 +409,9 @@
                     </div>
 
                     <!-- DWG & Notifications Panel -->
-                    <div class="flex flex-col gap-6" style="height: calc(100vh - 280px);">
+                    <div class="flex flex-col gap-6">
                         <!-- DWG Preview -->
-                        <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex-1">
+                        <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex-1" style="height: 340px;">
                             <div class="bg-gradient-to-r from-gray-50 to-white p-4 border-b-2 border-gray-200">
                                 <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                                     <i data-lucide="file-image" class="w-5 h-5 text-blue-600"></i>
@@ -417,15 +426,15 @@
                             </div>
                         </div>
 
-                        <!-- Edit Log Notifications -->
-                        <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex-1">
+                        <!-- Notification Panel (Copied from Recipe List) -->
+                        <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden h-fit">
                             <div class="bg-gradient-to-r from-gray-50 to-white p-4 border-b-2 border-gray-200">
                                 <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                                     <i data-lucide="bell" class="w-5 h-5 text-blue-600"></i>
                                     Edit Log Notifications
                                 </h3>
                             </div>
-                            <div class="p-4 space-y-2 overflow-y-auto" style="max-height: 300px;">
+                            <div class="p-4 space-y-2 overflow-y-auto" style="max-height: 400px;">
                                 <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
                                     <i data-lucide="edit-3" class="w-4 h-4 text-blue-600"></i>
                                     <span class="text-sm text-gray-700">10:22 – Tread Width updated</span>
@@ -438,16 +447,56 @@
                                     <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-600"></i>
                                     <span class="text-sm text-gray-700">11:10 – Specs synced from DWG</span>
                                 </div>
+                                 <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                    <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+                                    <span class="text-sm text-gray-700">09:15 – User Login (RPSCoE)</span>
+                                </div>
+                                 <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                    <i data-lucide="check-square" class="w-4 h-4 text-blue-600"></i>
+                                    <span class="text-sm text-gray-700">Yesterday – 3 Recipes Finalized</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recipe Selection View -->
-                <div id="rpscoeRecipeList" class="bg-white p-6 rounded-xl border-2 border-gray-200 shadow-sm">
-                    <h3 class="text-xl font-bold mb-4 text-gray-800">Select Recipe to Configure</h3>
-                    <div id="rpscoeRecipeListContainer" class="grid grid-cols-3 gap-4">
-                        <!-- Recipe cards will be populated here -->
+                <!-- Recipe Selection View - Updated with Notifications Panel -->
+                <div id="rpscoeRecipeList" class="grid grid-cols-3 gap-6">
+                    <div class="col-span-2 bg-white p-6 rounded-xl border-2 border-gray-200 shadow-sm">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">Select Recipe to Configure</h3>
+                        <div id="rpscoeRecipeListContainer" class="grid grid-cols-2 gap-4">
+                            <!-- Recipe cards will be populated here -->
+                        </div>
+                    </div>
+                    <div class="col-span-1 bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden h-fit">
+                        <div class="bg-gradient-to-r from-gray-50 to-white p-4 border-b-2 border-gray-200">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <i data-lucide="bell" class="w-5 h-5 text-blue-600"></i>
+                                Edit Log Notifications
+                            </h3>
+                        </div>
+                        <div class="p-4 space-y-2 overflow-y-auto" style="max-height: 400px;">
+                            <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="edit-3" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">10:22 – Tread Width updated</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="package" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">14:45 – Version changed to v1.3</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">11:10 – Specs synced from DWG</span>
+                            </div>
+                             <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">09:15 – User Login (RPSCoE)</span>
+                            </div>
+                             <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="check-square" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">Yesterday – 3 Recipes Finalized</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -480,8 +529,8 @@
 
                 <!-- BTP Work Area -->
                 <div id="btpWorkArea" class="grid grid-cols-2 gap-6" style="display: none;">
-                    <!-- Measurement Table -->
-                    <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex flex-col" style="height: calc(100vh - 280px);">
+                    <!-- Measurement Table - Fixed Height for ~10 items scrollable -->
+                    <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex flex-col" style="height: 550px;">
                         <div class="bg-gradient-to-r from-gray-50 to-white p-4 border-b-2 border-gray-200">
                             <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                                 <i data-lucide="ruler" class="w-5 h-5 text-blue-600"></i>
@@ -507,29 +556,29 @@
                     </div>
 
                     <!-- Scan Status & Notifications -->
-                    <div class="flex flex-col gap-6" style="height: calc(100vh - 280px);">
+                    <div class="flex flex-col gap-6">
                         <!-- Pending Scans -->
-                        <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex-1">
+                        <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex-1" style="height: 340px;">
                             <div class="bg-gradient-to-r from-gray-50 to-white p-4 border-b-2 border-gray-200">
                                 <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                                     <i data-lucide="clock" class="w-5 h-5 text-yellow-600"></i>
                                     Recipes Pending for Scanning
                                 </h3>
                             </div>
-                            <div class="p-4 space-y-2 overflow-y-auto" id="btpPendingScans" style="max-height: 300px;">
+                            <div class="p-4 space-y-2 overflow-y-auto" id="btpPendingScans" style="max-height: 280px;">
                                 <!-- Pending recipes will be populated here -->
                             </div>
                         </div>
 
-                        <!-- Edit Log Notifications -->
-                        <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden flex-1">
+                         <!-- Notification Panel (Copied from Recipe List) -->
+                         <div class="bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden h-fit">
                             <div class="bg-gradient-to-r from-gray-50 to-white p-4 border-b-2 border-gray-200">
                                 <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                                     <i data-lucide="bell" class="w-5 h-5 text-blue-600"></i>
                                     Edit Log Notifications
                                 </h3>
                             </div>
-                            <div class="p-4 space-y-2 overflow-y-auto" style="max-height: 300px;">
+                            <div class="p-4 space-y-2 overflow-y-auto" style="max-height: 400px;">
                                 <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
                                     <i data-lucide="upload" class="w-4 h-4 text-blue-600"></i>
                                     <span class="text-sm text-gray-700">10:30 – Actuals uploaded (Recipe A)</span>
@@ -542,23 +591,63 @@
                                     <i data-lucide="package" class="w-4 h-4 text-blue-600"></i>
                                     <span class="text-sm text-gray-700">12:05 – Version synced</span>
                                 </div>
+                                <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                    <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+                                    <span class="text-sm text-gray-700">08:00 – Shift Started (Batch B)</span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                    <i data-lucide="alert-circle" class="w-4 h-4 text-blue-600"></i>
+                                    <span class="text-sm text-gray-700">Yesterday – Machine Calibration</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- BTP Recipe List -->
-                <div id="btpRecipeList" class="bg-white p-6 rounded-xl border-2 border-gray-200 shadow-sm">
-                    <div class="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
-                            <p class="text-sm text-blue-700">
-                                <strong>Recipe Status Overview</strong> - Green badges indicate completed measurements, yellow badges show pending measurements.
-                            </p>
+                <!-- BTP Recipe List - Updated with Notifications Panel -->
+                <div id="btpRecipeList" class="grid grid-cols-3 gap-6">
+                    <div class="col-span-2 bg-white p-6 rounded-xl border-2 border-gray-200 shadow-sm">
+                        <div class="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+                                <p class="text-sm text-blue-700">
+                                    <strong>Recipe Status Overview</strong> - Green badges indicate completed measurements, yellow badges show pending measurements.
+                                </p>
+                            </div>
+                        </div>
+                        <div id="btpRecipeListContainer" class="grid grid-cols-2 gap-4">
+                            <!-- Recipe cards will be populated here -->
                         </div>
                     </div>
-                    <div id="btpRecipeListContainer" class="grid grid-cols-3 gap-4">
-                        <!-- Recipe cards will be populated here -->
+                    <div class="col-span-1 bg-white rounded-xl border-2 border-gray-200 shadow-sm overflow-hidden h-fit">
+                        <div class="bg-gradient-to-r from-gray-50 to-white p-4 border-b-2 border-gray-200">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <i data-lucide="bell" class="w-5 h-5 text-blue-600"></i>
+                                Edit Log Notifications
+                            </h3>
+                        </div>
+                        <div class="p-4 space-y-2 overflow-y-auto" style="max-height: 400px;">
+                            <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="upload" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">10:30 – Actuals uploaded (Recipe A)</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">11:15 – Schedule date updated</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="package" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">12:05 – Version synced</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">08:00 – Shift Started (Batch B)</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-blue-50 border-l-4 border-blue-600 rounded-lg">
+                                <i data-lucide="alert-circle" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm text-gray-700">Yesterday – Machine Calibration</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -594,6 +683,12 @@
                                 </div>
                             </div>
                             <div class="flex gap-2 items-center">
+                                <!-- Reset Button for Comparison Tab -->
+                                <button id="comparisonResetBtn" onclick="resetComparison()" class="hidden px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition-all flex items-center gap-2">
+                                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                    Reset
+                                </button>
+                                
                                 <select id="comparisonRecipeSelect" onchange="handleComparisonRecipeChange()" class="p-2 border-2 border-gray-300 rounded text-sm min-w-[200px]">
                                     <option value="">Select Recipe</option>
                                 </select>
@@ -609,10 +704,7 @@
                                             <option value="v3">v3 - Jan 06, 2026</option>
                                         </select>
                                     </div>
-                                    <button onclick="openVersionHistory()" class="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 flex items-center gap-2">
-                                        <i data-lucide="history" class="w-4 h-4"></i>
-                                        View History
-                                    </button>
+                                    <!-- Removed View History Button -->
                                 </div>
                                 
                                 <!-- Version Status Indicator -->
@@ -625,16 +717,7 @@
                         
                         <!-- Recipe Overview Table -->
                         <div id="recipeSelectionView" class="bg-white rounded-lg">
-                            <div class="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6">
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
-                                    <p class="text-sm text-blue-700">
-                                        <strong>Available Recipes</strong> - Click a recipe name for full details, and click the Overall Grade to view the complete analysis report.
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <div class="overflow-x-auto">
+                            <div class="overflow-visible"> <!-- Changed from overflow-x-auto to visible for popups -->
                                 <table class="w-full border-collapse">
                                     <thead>
                                         <tr class="bg-gray-200">
@@ -1050,6 +1133,45 @@
         </footer>
     </div>
 
+    <!-- Log History Modal -->
+    <div id="logHistoryModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-700 to-blue-600 text-white p-6 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="history" class="w-6 h-6"></i>
+                    <div>
+                        <h2 class="text-xl font-bold">Edit Log History</h2>
+                        <p class="text-sm text-blue-100" id="logHistorySubtitle">Recipe Parameter Changes</p>
+                    </div>
+                </div>
+                <button onclick="closeLogHistoryModal()" class="text-white hover:bg-blue-800 rounded-full p-2">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 180px);">
+                <table class="w-full border-collapse">
+                    <thead class="sticky top-0 bg-gray-100 z-10">
+                        <tr class="bg-gray-200">
+                            <th class="border-2 border-gray-300 p-3 text-left">Recipe Name</th>
+                            <th class="border-2 border-gray-300 p-3 text-left">Edited By (ID)</th>
+                            <th class="border-2 border-gray-300 p-3 text-left">Edit Source</th>
+                            <th class="border-2 border-gray-300 p-3 text-left">Time</th>
+                            <th class="border-2 border-gray-300 p-3 text-left">Version</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logHistoryTableBody">
+                        <!-- Will be populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="bg-gray-100 p-4 flex justify-end border-t-2 border-gray-200">
+                <button onclick="closeLogHistoryModal()" class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-semibold">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Activation Modal -->
     <div id="activationModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
@@ -1252,22 +1374,6 @@
             'recipe-f': 'completed'
         };
 
-        // Version data for comparison system
-        const versionData = {
-            v5: {
-                parameters: [
-                    { name: 'Overall Tread Center Gauge', master: '12.5mm ±0.5', section1: '12.6mm', section2: '12.7mm', section3: '12.6mm', grade1: 'A', grade2: 'A', grade3: 'A', overallGrade: 'A' },
-                    { name: 'Overall Shoulder Gauge SS', master: '11.0mm ±0.4', section1: '11.2mm', section2: '11.3mm', section3: '11.4mm', grade1: 'B', grade2: 'B', grade3: 'C', overallGrade: 'B' },
-                    // ... (rest of parameters from the comparison system)
-                ]
-            },
-            v4: {
-                parameters: [
-                    // Historical version data
-                ]
-            }
-        };
-
         // Application state
         let appState = {
             currentTab: 'rpscoe',
@@ -1310,6 +1416,7 @@
             
             renderRecipeCards();
             setDefaultEffectiveDate();
+            populateRecipeOverviewTable(); // Initial populate for comparison tab
         }
 
         function setDefaultEffectiveDate() {
@@ -1431,9 +1538,12 @@
             if (tab === 'rpscoe') {
                 document.getElementById('rpscoeRecipeSelect').value = recipeId;
                 handleRPSCoERecipeChange();
-            } else {
+            } else if (tab === 'btp') {
                 document.getElementById('btpRecipeSelect').value = recipeId;
                 handleBTPRecipeChange();
+            } else if (tab === 'comparison') {
+                document.getElementById('comparisonRecipeSelect').value = recipeId;
+                handleComparisonRecipeChange();
             }
         }
 
@@ -1456,16 +1566,20 @@
                 saveBtn.classList.remove('disabled:opacity-50', 'disabled:cursor-not-allowed', 'disabled:from-gray-400', 'disabled:to-gray-500');
                 saveBtn.classList.add('hover:from-blue-700', 'hover:to-blue-800');
                 
-                // Populate version dropdown
+                // Populate version dropdown with latest indicator
                 const versionSelect = document.getElementById('rpscoeVersionSelect');
                 versionSelect.disabled = false;
                 versionSelect.innerHTML = '<option value="">Select Version</option>' + 
-                    recipe.versions.map(v => `<option value="${v}" ${v === appState.rpscoe.selectedVersion ? 'selected' : ''}>${v}</option>`).join('');
+                    recipe.versions.map((v, index) => {
+                        const isLatest = index === recipe.versions.length - 1;
+                        const label = isLatest ? `${v} (Latest)` : v;
+                        return `<option value="${v}" ${v === appState.rpscoe.selectedVersion ? 'selected' : ''}>${label}</option>`;
+                    }).join('');
                 
                 renderRPSCoEParameters();
             } else {
                 document.getElementById('rpscoeWorkArea').style.display = 'none';
-                document.getElementById('rpscoeRecipeList').style.display = 'block';
+                document.getElementById('rpscoeRecipeList').style.display = 'grid';
                 
                 // Disable Save Target Specs button
                 saveBtn.disabled = true;
@@ -1551,7 +1665,7 @@
             document.getElementById('rpscoeVersionSelect').value = '';
             document.getElementById('rpscoeVersionSelect').disabled = true;
             document.getElementById('rpscoeWorkArea').style.display = 'none';
-            document.getElementById('rpscoeRecipeList').style.display = 'block';
+            document.getElementById('rpscoeRecipeList').style.display = 'grid';
             
             // Disable Save Target Specs button
             const saveBtn = document.getElementById('saveTargetSpecsBtn');
@@ -1609,16 +1723,21 @@
                 document.getElementById('btpWorkArea').style.display = 'grid';
                 document.getElementById('btpRecipeList').style.display = 'none';
                 
+                // Populate version dropdown with latest indicator
                 const versionSelect = document.getElementById('btpVersionSelect');
                 versionSelect.disabled = false;
                 versionSelect.innerHTML = '<option value="">Select Version</option>' + 
-                    recipe.versions.map(v => `<option value="${v}" ${v === appState.btp.selectedVersion ? 'selected' : ''}>${v}</option>`).join('');
+                    recipe.versions.map((v, index) => {
+                        const isLatest = index === recipe.versions.length - 1;
+                        const label = isLatest ? `${v} (Latest)` : v;
+                        return `<option value="${v}" ${v === appState.btp.selectedVersion ? 'selected' : ''}>${label}</option>`;
+                    }).join('');
                 
                 renderBTPMeasurements();
                 renderBTPPendingScans();
             } else {
                 document.getElementById('btpWorkArea').style.display = 'none';
-                document.getElementById('btpRecipeList').style.display = 'block';
+                document.getElementById('btpRecipeList').style.display = 'grid';
             }
             
             lucide.createIcons();
@@ -1626,23 +1745,38 @@
 
         function renderBTPMeasurements() {
             const tbody = document.getElementById('btpMeasurementsBody');
+            const currentRecipeId = appState.btp.selectedRecipe ? appState.btp.selectedRecipe.id : null;
+            const isPending = currentRecipeId && BTP_RECIPE_STATUS[currentRecipeId] === 'pending';
             
             tbody.innerHTML = PARAMETERS.map(param => {
                 const baseValue = (Math.random() * 10 + 5).toFixed(2);
-                const actual1 = (parseFloat(baseValue) + (Math.random() - 0.5) * 0.2).toFixed(2);
-                const actual2 = (parseFloat(baseValue) + (Math.random() - 0.5) * 0.2).toFixed(2);
-                const actual3 = (parseFloat(baseValue) + (Math.random() - 0.5) * 0.2).toFixed(2);
-                const status = ['green', 'green', 'green', 'yellow', 'red'][Math.floor(Math.random() * 5)];
-                const statusColor = status === 'green' ? 'bg-green-100 text-green-800' :
-                                   status === 'yellow' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
+                let actual1, actual2, actual3, rowClass, cellClass;
+
+                if (isPending) {
+                    actual1 = "";
+                    actual2 = "";
+                    actual3 = "";
+                    rowClass = "bg-yellow-50";
+                    cellClass = "text-center font-bold text-yellow-600 italic bg-yellow-100"; 
+                } else {
+                    actual1 = (parseFloat(baseValue) + (Math.random() - 0.5) * 0.2).toFixed(2);
+                    actual2 = (parseFloat(baseValue) + (Math.random() - 0.5) * 0.2).toFixed(2);
+                    actual3 = (parseFloat(baseValue) + (Math.random() - 0.5) * 0.2).toFixed(2);
+                    rowClass = "hover:bg-gray-50";
+                    cellClass = "text-center font-semibold";
+                }
                 
+                // Adjusting rendering to ensure color coding works
+                const commonCell = isPending ? "border-b border-yellow-200" : "border-b border-gray-200";
+                const valueCell = isPending ? "border-b border-yellow-200 " + cellClass : "border-b border-gray-200 " + cellClass;
+
                 return `
-                    <tr class="hover:bg-gray-50">
-                        <td class="border-b border-gray-200">${param}</td>
-                        <td class="border-b border-gray-200">${baseValue} mm</td>
-                        <td class="border-b border-gray-200 text-center ${statusColor} font-semibold">${actual1}</td>
-                        <td class="border-b border-gray-200 text-center ${statusColor} font-semibold">${actual2}</td>
-                        <td class="border-b border-gray-200 text-center ${statusColor} font-semibold">${actual3}</td>
+                    <tr class="${rowClass}">
+                        <td class="${commonCell}">${param}</td>
+                        <td class="${commonCell}">${baseValue} mm</td>
+                        <td class="${valueCell}">${actual1}</td>
+                        <td class="${valueCell}">${actual2}</td>
+                        <td class="${valueCell}">${actual3}</td>
                     </tr>
                 `;
             }).join('');
@@ -1671,7 +1805,7 @@
             document.getElementById('btpVersionSelect').value = '';
             document.getElementById('btpVersionSelect').disabled = true;
             document.getElementById('btpWorkArea').style.display = 'none';
-            document.getElementById('btpRecipeList').style.display = 'block';
+            document.getElementById('btpRecipeList').style.display = 'grid';
         }
 
         // ===========================
@@ -1681,17 +1815,63 @@
         function handleComparisonRecipeChange() {
             const recipeId = document.getElementById('comparisonRecipeSelect').value;
             appState.comparison.selectedRecipe = recipeId;
+            const resetBtn = document.getElementById('comparisonResetBtn');
             
             if (recipeId) {
+                // Show reset button
+                resetBtn.classList.remove('hidden');
+                
                 document.getElementById('versionControls').classList.remove('hidden');
                 document.getElementById('versionControls').classList.add('flex');
+                
+                // Populate version dropdown from recipe data
+                const recipe = RECIPES_DATA.find(r => r.id === recipeId);
+                if (recipe) {
+                    const versionSelect = document.getElementById('versionSelect');
+                    versionSelect.innerHTML = recipe.versions.map((v, index) => {
+                        const isLatest = index === recipe.versions.length - 1;
+                        const label = isLatest ? `${v} (Latest)` : v;
+                        return `<option value="${v}" ${isLatest ? 'selected' : ''}>${label}</option>`;
+                    }).join('');
+                    appState.comparison.currentVersion = recipe.versions[recipe.versions.length - 1];
+                }
             } else {
+                // Hide reset button
+                resetBtn.classList.add('hidden');
+                
                 document.getElementById('versionControls').classList.add('hidden');
                 document.getElementById('versionControls').classList.remove('flex');
             }
             
             updateVersionIndicator();
             updateDataComparisonView();
+        }
+
+        function resetComparison() {
+            appState.comparison = { selectedRecipe: null, currentVersion: 'v5' };
+            document.getElementById('comparisonRecipeSelect').value = '';
+            document.getElementById('comparisonResetBtn').classList.add('hidden');
+            document.getElementById('versionControls').classList.add('hidden');
+            document.getElementById('versionIndicator').classList.add('hidden');
+            document.getElementById('historicalAlert').classList.add('hidden');
+            
+            // Show recipe selection view, hide comparison table
+            document.getElementById('recipeSelectionView').classList.remove('hidden');
+            document.getElementById('dataComparisonTable').classList.add('hidden');
+            document.getElementById('overallGradeContainer').classList.add('hidden');
+            
+            // Reset summary
+            document.getElementById('passedCount').textContent = '0/44';
+            document.getElementById('passedPercent').textContent = 'No Recipe Selected';
+            document.getElementById('alertCount').textContent = '0/44';
+            document.getElementById('alertStatus').textContent = 'No Recipe Selected';
+            document.getElementById('failedCount').textContent = '0/44';
+            document.getElementById('failedStatus').textContent = 'No Recipe Selected';
+            document.getElementById('overallGrade').textContent = '-';
+            document.getElementById('overallStatus').textContent = 'No Recipe Selected';
+            
+            // Re-populate recipe overview table
+            populateRecipeOverviewTable();
         }
 
         function handleVersionChange() {
@@ -1713,7 +1893,11 @@
             indicator.classList.remove('hidden');
             indicator.classList.add('flex');
             
-            if (appState.comparison.currentVersion === 'v5') {
+            // Check if current version is the latest
+            const recipe = RECIPES_DATA.find(r => r.id === appState.comparison.selectedRecipe);
+            const isLatest = recipe && appState.comparison.currentVersion === recipe.versions[recipe.versions.length - 1];
+            
+            if (isLatest) {
                 indicator.className = 'flex items-center gap-2 px-3 py-2 rounded bg-green-100 border-2 border-green-500';
                 indicator.innerHTML = `
                     <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
@@ -1726,6 +1910,7 @@
                     <i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-600"></i>
                     <span class="text-xs font-bold text-yellow-700">HISTORICAL</span>
                 `;
+                document.getElementById('historicalVersionText').textContent = appState.comparison.currentVersion;
                 historicalAlert.classList.remove('hidden');
             }
             
@@ -1733,15 +1918,246 @@
         }
 
         function updateDataComparisonView() {
-            // Implement comparison view logic here
-            // This would populate the comparison tables based on selected recipe and version
+            const recipeSelectionView = document.getElementById('recipeSelectionView');
+            const dataComparisonTable = document.getElementById('dataComparisonTable');
+            const overallGradeContainer = document.getElementById('overallGradeContainer');
+            
+            if (appState.comparison.selectedRecipe) {
+                recipeSelectionView.classList.add('hidden');
+                dataComparisonTable.classList.remove('hidden');
+                overallGradeContainer.classList.remove('hidden');
+                
+                // Populate comparison table with parameter data
+                const tbody = document.getElementById('parameterTableBody');
+                tbody.innerHTML = PARAMETERS.map(param => {
+                    const baseValue = (Math.random() * 10 + 5).toFixed(2);
+                    const section1 = (parseFloat(baseValue) + (Math.random() - 0.5) * 0.3).toFixed(2);
+                    const section2 = (parseFloat(baseValue) + (Math.random() - 0.5) * 0.3).toFixed(2);
+                    const section3 = (parseFloat(baseValue) + (Math.random() - 0.5) * 0.3).toFixed(2);
+                    
+                    // Calculate grade based on deviation
+                    const grades = ['A', 'A', 'A', 'B', 'B', 'C'];
+                    const overallGrade = grades[Math.floor(Math.random() * grades.length)];
+                    const gradeColor = overallGrade === 'A' ? 'bg-green-600' :
+                                      overallGrade === 'B' ? 'bg-blue-600' :
+                                      overallGrade === 'C' ? 'bg-yellow-600' : 'bg-red-600';
+                    
+                    return `
+                        <tr class="hover:bg-gray-50">
+                            <td class="border-2 border-gray-300 p-3 font-medium">${param}</td>
+                            <td class="border-2 border-gray-300 p-3 bg-blue-50">${baseValue} mm ±0.5</td>
+                            <td class="border-2 border-gray-300 p-3 bg-green-50 text-center">
+                                <span class="font-medium">${section1} mm</span>
+                            </td>
+                            <td class="border-2 border-gray-300 p-3 bg-green-50 text-center">
+                                <span class="font-medium">${section2} mm</span>
+                            </td>
+                            <td class="border-2 border-gray-300 p-3 bg-green-50 text-center">
+                                <span class="font-medium">${section3} mm</span>
+                            </td>
+                            <td class="border-2 border-gray-300 p-3 text-center">
+                                <span class="px-3 py-1 rounded font-bold text-white text-lg ${gradeColor}">${overallGrade}</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                // Calculate summary statistics
+                const totalParams = PARAMETERS.length;
+                const gradeA = Math.floor(totalParams * 0.65);
+                const gradeB = Math.floor(totalParams * 0.25);
+                const gradeC = Math.floor(totalParams * 0.08);
+                const gradeD = totalParams - gradeA - gradeB - gradeC;
+                const passed = gradeA + gradeB;
+                const compliance = ((passed / totalParams) * 100).toFixed(1);
+                
+                document.getElementById('passedCount').textContent = `${passed}/${totalParams}`;
+                document.getElementById('passedPercent').textContent = `${compliance}% Compliance`;
+                document.getElementById('alertCount').textContent = `${gradeC}/${totalParams}`;
+                document.getElementById('alertStatus').textContent = gradeC > 0 ? 'Requires Monitoring' : 'No Alerts';
+                document.getElementById('failedCount').textContent = `0/${totalParams}`;
+                document.getElementById('failedStatus').textContent = 'No Failures';
+                
+                const overallGrade = 'A';
+                document.getElementById('overallGrade').textContent = overallGrade;
+                document.getElementById('overallGrade').className = 'text-3xl font-bold text-green-700';
+                document.getElementById('overallStatus').textContent = 'Excellent Performance';
+                
+                document.getElementById('overallGradeBadge').textContent = overallGrade;
+                document.getElementById('overallGradeBadge').className = 'px-4 py-1 rounded font-bold text-white text-lg bg-green-600';
+                
+                document.getElementById('passedCount').textContent = `${gradeA + gradeB}/${totalParams}`;
+                document.getElementById('passedPercent').textContent = `${((gradeA + gradeB) / totalParams * 100).toFixed(1)}% Compliance`;
+                document.getElementById('alertCount').textContent = `${gradeC}/${totalParams}`;
+                document.getElementById('alertStatus').textContent = gradeC > 0 ? 'Requires Monitoring' : 'No Alerts';
+                document.getElementById('failedCount').textContent = `0/${totalParams}`;
+                document.getElementById('failedStatus').textContent = 'No Failures';
+            } else {
+                recipeSelectionView.classList.remove('hidden');
+                dataComparisonTable.classList.add('hidden');
+                overallGradeContainer.classList.add('hidden');
+                
+                // Populate recipe overview table
+                populateRecipeOverviewTable();
+                
+                // Reset summary
+                document.getElementById('passedCount').textContent = '0/44';
+                document.getElementById('passedPercent').textContent = 'No Recipe Selected';
+                document.getElementById('alertCount').textContent = '0/44';
+                document.getElementById('alertStatus').textContent = 'No Recipe Selected';
+                document.getElementById('failedCount').textContent = '0/44';
+                document.getElementById('failedStatus').textContent = 'No Recipe Selected';
+                document.getElementById('overallGrade').textContent = '-';
+                document.getElementById('overallStatus').textContent = 'No Recipe Selected';
+            }
+            
+            lucide.createIcons();
+        }
+
+        // Generate HTML for the hover popup content
+        function generatePopupHtml(type, recipeId) {
+            const title = type === 'master' ? 'Master Specs' :
+                          type === 'sec1' ? 'Section 1 Analysis' :
+                          type === 'sec2' ? 'Section 2 Analysis' : 'Section 3 Analysis';
+            
+            const bgColor = type === 'master' ? 'bg-blue-50' : 'bg-green-50';
+            const icon = type === 'master' ? 'database' : 'activity';
+
+            let content = `
+                <div class="hover-popup">
+                    <div class="sticky top-0 bg-white border-b border-gray-200 p-3 z-10 shadow-sm">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i data-lucide="${icon}" class="w-4 h-4 text-blue-600"></i>
+                            <h5 class="font-bold text-gray-800 text-sm">${title}</h5>
+                        </div>
+                        <p class="text-xs text-gray-500 font-medium">${PARAMETERS.length} Parameters Listed</p>
+                    </div>
+                    <div class="p-2 space-y-1">
+            `;
+
+            PARAMETERS.forEach((param, i) => {
+                // Mock data logic specific for popup display
+                let valStr = '';
+                
+                if (type === 'master') {
+                    // Stable random per parameter index for demo consistency
+                    const baseVal = (10 + (i % 20) * 0.5).toFixed(2);
+                    valStr = `${baseVal} mm ±0.5`;
+                } else {
+                    const baseVal = (10 + (i % 20) * 0.5);
+                    const variance = (Math.sin(i + recipeId.length) * 0.4);
+                    const val = (baseVal + variance).toFixed(2);
+                    
+                    // Determine random grade based on index
+                    const r = (i * 7) % 10;
+                    const grade = r > 8 ? 'C' : r > 6 ? 'B' : 'A';
+                    const gradeColor = grade === 'A' ? 'bg-green-100 text-green-800' : 
+                                      grade === 'B' ? 'bg-blue-100 text-blue-800' : 
+                                      'bg-yellow-100 text-yellow-800';
+                    
+                    valStr = `
+                        <div class="flex items-center justify-end gap-2">
+                            <span class="font-mono font-semibold">${val} mm</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${gradeColor}">${grade}</span>
+                        </div>
+                    `;
+                }
+
+                content += `
+                    <div class="flex justify-between items-center text-xs border-b border-gray-100 py-1.5 hover:bg-gray-50 px-2 rounded">
+                        <span class="text-gray-600 font-medium truncate w-3/5" title="${param}">${param}</span>
+                        <span class="text-gray-800 w-2/5 text-right">${valStr}</span>
+                    </div>
+                `;
+            });
+
+            content += `
+                    </div>
+                </div>
+            `;
+            return content;
+        }
+
+        function populateRecipeOverviewTable() {
+            const tbody = document.getElementById('recipeTableBody');
+            const recipeInfo = {
+                'recipe-a': { name: 'Recipe A - Standard Compound', overallGrade: 'A' },
+                'recipe-b': { name: 'Recipe B - High Performance', overallGrade: 'B' },
+                'recipe-c': { name: 'Recipe C - All Weather', overallGrade: 'A' },
+                'recipe-d': { name: 'Recipe D - Heavy Duty', overallGrade: 'A' },
+                'recipe-e': { name: 'Recipe E - Eco Friendly', overallGrade: 'B' },
+                'recipe-f': { name: 'Recipe F - Winter Special', overallGrade: 'A' }
+            };
+            
+            tbody.innerHTML = RECIPES_DATA.map(recipe => {
+                const info = recipeInfo[recipe.id];
+                const gradeColor = info.overallGrade === 'A' ? 'bg-green-600' :
+                                  info.overallGrade === 'B' ? 'bg-blue-600' :
+                                  info.overallGrade === 'C' ? 'bg-yellow-600' : 'bg-red-600';
+                
+                return `
+                    <tr class="recipe-row hover:bg-blue-50">
+                        <td class="border-2 border-gray-300 p-3 recipe-name-cell" onclick="selectRecipeCard('${recipe.id}', 'comparison')">
+                            <div class="font-bold text-gray-800">${info.name}</div>
+                            <div class="text-sm text-gray-600">${recipe.description}</div>
+                            <div class="text-xs text-gray-500 mt-1">44 Parameters</div>
+                        </td>
+                        
+                        <!-- Master Data Column with Popup -->
+                        <td class="border-2 border-gray-300 p-3 text-center bg-blue-50 hover-trigger relative">
+                            <div class="flex flex-col items-center gap-1 cursor-help">
+                                <i data-lucide="database" class="w-6 h-6 text-blue-600"></i>
+                                <span class="text-xs text-gray-600">Target Specs</span>
+                            </div>
+                            ${generatePopupHtml('master', recipe.id)}
+                        </td>
+                        
+                        <!-- Section 1 Column with Popup -->
+                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50 hover-trigger relative">
+                            <div class="flex flex-col items-center gap-1 cursor-help">
+                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                <span class="text-xs text-gray-600">Measured</span>
+                            </div>
+                            ${generatePopupHtml('sec1', recipe.id)}
+                        </td>
+                        
+                        <!-- Section 2 Column with Popup -->
+                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50 hover-trigger relative">
+                            <div class="flex flex-col items-center gap-1 cursor-help">
+                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                <span class="text-xs text-gray-600">Measured</span>
+                            </div>
+                            ${generatePopupHtml('sec2', recipe.id)}
+                        </td>
+                        
+                        <!-- Section 3 Column with Popup -->
+                        <td class="border-2 border-gray-300 p-3 text-center bg-green-50 hover-trigger relative">
+                            <div class="flex flex-col items-center gap-1 cursor-help">
+                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                <span class="text-xs text-gray-600">Measured</span>
+                            </div>
+                            ${generatePopupHtml('sec3', recipe.id)}
+                        </td>
+                        
+                        <td class="border-2 border-gray-300 p-3 text-center">
+                            <span class="px-4 py-2 rounded font-bold text-white text-lg ${gradeColor}">${info.overallGrade}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Re-initialize icons for the newly injected HTML
+            setTimeout(() => lucide.createIcons(), 0);
         }
 
         function loadLatestVersion() {
-            appState.comparison.currentVersion = 'v5';
-            document.getElementById('versionSelect').value = 'v5';
-            updateVersionIndicator();
-            updateDataComparisonView();
+            const recipe = RECIPES_DATA.find(r => r.id === appState.comparison.selectedRecipe);
+            if (recipe) {
+                appState.comparison.currentVersion = recipe.versions[recipe.versions.length - 1];
+                document.getElementById('versionSelect').value = appState.comparison.currentVersion;
+                updateVersionIndicator();
+                updateDataComparisonView();
+            }
         }
 
         function openVersionHistory() {
@@ -1766,7 +2182,138 @@
         // ===========================
         
         function openLogHistory(tab) {
-            alert(`Log history for ${tab} would open here`);
+            const modal = document.getElementById('logHistoryModal');
+            const subtitle = document.getElementById('logHistorySubtitle');
+            const tbody = document.getElementById('logHistoryTableBody');
+            
+            if (tab === 'rpscoe') {
+                subtitle.textContent = 'RPSCoE Configuration Changes';
+                
+                // RPSCoE log history with DWG and Web Portal sources
+                tbody.innerHTML = `
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe A - Standard Compound</td>
+                        <td class="border-2 border-gray-300 p-3">USER_12345</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">Web Portal</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-12 10:22:15</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v1.3</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe B - High Performance</td>
+                        <td class="border-2 border-gray-300 p-3">USER_67890</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">DWG</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-12 09:45:30</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v2.1</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe C - All Weather</td>
+                        <td class="border-2 border-gray-300 p-3">USER_54321</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">Web Portal</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-11 16:30:00</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v3.2</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe D - Heavy Duty</td>
+                        <td class="border-2 border-gray-300 p-3">USER_11111</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">DWG</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-11 14:15:45</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v1.5</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe E - Eco Friendly</td>
+                        <td class="border-2 border-gray-300 p-3">USER_22222</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">Web Portal</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-10 11:20:10</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v2.1</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe F - Winter Special</td>
+                        <td class="border-2 border-gray-300 p-3">USER_33333</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">DWG</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-10 08:50:25</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v4.1</td>
+                    </tr>
+                `;
+            } else if (tab === 'btp') {
+                subtitle.textContent = 'BTP Quality Actual Measurements';
+                
+                // BTP log history with Excel Sheet source only
+                tbody.innerHTML = `
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe A - Standard Compound</td>
+                        <td class="border-2 border-gray-300 p-3">USER_45678</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Excel Sheet</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-13 14:30:22</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v1.3</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe C - All Weather</td>
+                        <td class="border-2 border-gray-300 p-3">USER_78901</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Excel Sheet</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-13 11:15:45</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v3.2</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe F - Winter Special</td>
+                        <td class="border-2 border-gray-300 p-3">USER_23456</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Excel Sheet</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-12 16:45:12</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v4.2</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe B - High Performance</td>
+                        <td class="border-2 border-gray-300 p-3">USER_56789</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Excel Sheet</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-12 10:30:55</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v2.2</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe D - Heavy Duty</td>
+                        <td class="border-2 border-gray-300 p-3">USER_89012</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Excel Sheet</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-11 09:20:33</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v1.5</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-2 border-gray-300 p-3">Recipe E - Eco Friendly</td>
+                        <td class="border-2 border-gray-300 p-3">USER_34567</td>
+                        <td class="border-2 border-gray-300 p-3">
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Excel Sheet</span>
+                        </td>
+                        <td class="border-2 border-gray-300 p-3">2026-01-10 15:10:28</td>
+                        <td class="border-2 border-gray-300 p-3 font-semibold">v2.1</td>
+                    </tr>
+                `;
+            }
+            
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+        
+        function closeLogHistoryModal() {
+            document.getElementById('logHistoryModal').classList.add('hidden');
         }
     </script>
 </body>
