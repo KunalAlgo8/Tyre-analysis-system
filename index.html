@@ -279,10 +279,13 @@
                             </select>
                         </div>
                         <div class="flex items-center gap-3">
-                             <button onclick="openScheduleUploadModal()" class="px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-semibold flex items-center gap-2 shadow-md">
+                             <button id="scheduleUploadBtn"
+                                    onclick="openScheduleUploadModal()"
+                                    class="px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-semibold flex items-center gap-2 shadow-md">
                                 <i data-lucide="upload" class="w-4 h-4"></i>
                                 Schedule Upload
                             </button>
+
                             <button onclick="resetBTP()" class="px-6 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold flex items-center gap-2">
                                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                                 Reset
@@ -609,6 +612,9 @@
     </div>
 
     <script>
+        let loggedInRole = null;
+        let scheduleBtn = null;
+
         // Data Structures
         const RECIPES_DATA = [
             { id: 'recipe-a', name: 'Recipe A - Standard Compound', description: 'Standard formulation', versions: ['v1.0', 'v1.1', 'v1.2', 'v1.3'] },
@@ -670,19 +676,59 @@
         }
 
         // Logic
-        function login() {
-            const u = document.getElementById('loginUsername').value;
-            const p = document.getElementById('loginPassword').value;
-            const r = document.getElementById('loginRole').value;
-            if (!u || !p || !r) { alert('Please fill in all fields'); return; }
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            const roleText = r === 'rpscoe' ? 'RPSCoE' : r === 'btp-quality' ? 'BTP Quality' : 'BTP Technical';
-            document.getElementById('userRoleDisplay').textContent = roleText;
-            if (r === 'btp-quality') { document.getElementById('tab-rpscoe').style.display = 'none'; switchTab('btp'); }
-            else { document.getElementById('tab-rpscoe').style.display = 'flex'; switchTab('rpscoe'); }
-            lucide.createIcons();
-        }
+function login() {
+    const u = document.getElementById('loginUsername').value;
+    const p = document.getElementById('loginPassword').value;
+    const r = document.getElementById('loginRole').value;
+
+    if (!u || !p || !r) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    // store role globally
+    loggedInRole = r;
+
+    // show app
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
+
+    // role label
+    document.getElementById('userRoleDisplay').textContent =
+        r === 'rpscoe' ? 'RPSCoE' :
+        r === 'btp-quality' ? 'BTP Quality' :
+        'BTP Technical';
+
+    // tabs – ALL visible for all roles
+    document.getElementById('tab-rpscoe').style.display = 'flex';
+    document.getElementById('tab-btp').style.display = 'flex';
+    document.getElementById('tab-comparison').style.display = 'flex';
+    document.getElementById('tab-analytics').style.display = 'flex';
+
+    // schedule upload button permission
+    scheduleBtn = document.getElementById('scheduleUploadBtn');
+    if (loggedInRole === 'btp-quality') {
+        if (scheduleBtn) scheduleBtn.style.display = 'flex';
+    } else {
+        if (scheduleBtn) scheduleBtn.style.display = 'none';
+    }
+
+    const saveBtn = document.getElementById('saveTargetSpecsBtn');
+
+if (loggedInRole === 'rpscoe') {
+    saveBtn.style.display = 'flex';
+    saveBtn.disabled = true; // enabled only after recipe selection
+} else {
+    saveBtn.style.display = 'none';
+}
+
+
+    // default tab
+    switchTab(loggedInRole === 'btp-quality' ? 'btp' : 'rpscoe');
+
+    lucide.createIcons();
+}
+
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
@@ -751,7 +797,16 @@
                 vSel.innerHTML = '<option value="">Select Version</option>' + recipe.versions.map((v, i) => `<option value="${v}" ${i===recipe.versions.length-1?'selected':''}>${v}${i===recipe.versions.length-1?' (Latest)':''}</option>`).join('');
                 document.getElementById('rpscoeWorkArea').style.display = 'grid';
                 document.getElementById('rpscoeRecipeList').style.display = 'none';
-                document.getElementById('saveTargetSpecsBtn').disabled = false;
+                const saveBtn = document.getElementById('saveTargetSpecsBtn');
+
+if (loggedInRole === 'rpscoe') {
+    saveBtn.disabled = false;
+    saveBtn.style.display = 'flex';
+} else {
+    saveBtn.disabled = true;
+    saveBtn.style.display = 'none';
+}
+
                 renderRPSCoEParameters();
             } else if (tab === 'btp') {
                 appState.btp.selectedRecipe = recipe;
@@ -791,18 +846,41 @@
                 return `<tr class="${isNull?'row-null':''}">
                     <td class="border-b border-gray-200">${p.name}</td>
                     <td class="border-b border-gray-200 ${isNull?'cell-null':''}" id="spec-${p.id}">${isNull?'Null':p.targetSpec}</td>
-                    <td class="border-b border-gray-200 text-center"><span class="edit-icon inline-flex" onclick="enableInlineEdit('${p.id}')"><i data-lucide="pencil" class="w-4 h-4"></i></span></td>
+                    <td class="border-b border-gray-200 text-center">
+    ${
+        loggedInRole === 'rpscoe'
+        ? `<span class="edit-icon inline-flex" onclick="enableInlineEdit('${p.id}')">
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+           </span>`
+        : `<span class="text-xs italic text-gray-400">View</span>`
+    }
+</td>
+
                 </tr>`;
             }).join('');
             lucide.createIcons();
         }
 
-        function enableInlineEdit(id) {
-            const param = appState.rpscoe.parameterData.find(p => p.id === id);
-            if(!param) return;
-            document.getElementById(`spec-${id}`).innerHTML = `<input type="text" class="inline-edit-input" id="edit-input-${id}" value="${param.targetSpec||''}" onkeypress="if(event.key==='Enter') saveInlineEdit('${id}')" onblur="saveInlineEdit('${id}')">`;
-            document.getElementById(`edit-input-${id}`).focus();
-        }
+function enableInlineEdit(id) {
+    if (loggedInRole !== 'rpscoe') {
+        alert('Access denied');
+        return;
+    }
+
+    const param = appState.rpscoe.parameterData.find(p => p.id === id);
+    if (!param) return;
+
+    document.getElementById(`spec-${id}`).innerHTML = `
+        <input type="text"
+               class="inline-edit-input"
+               id="edit-input-${id}"
+               value="${param.targetSpec || ''}"
+               onkeypress="if(event.key==='Enter') saveInlineEdit('${id}')"
+               onblur="saveInlineEdit('${id}')">`;
+
+    document.getElementById(`edit-input-${id}`).focus();
+}
+
 
         function saveInlineEdit(id) {
             const input = document.getElementById(`edit-input-${id}`);
@@ -1231,28 +1309,49 @@ tbody.innerHTML = `
         ];
 
         const cutAnalysisData = [
-            { id: 1, parameter: "Overall Tread Center Gauge", specTarget: "14", s1: "14.59", s2: "14.64", s3: "14.6", avg: "14.61", score: "8.00", rating: "B", status: "OK" },
-            { id: 2, parameter: "Overall Shoulder Gauge SS", specTarget: "15.5", s1: "16.88", s2: "17.13", s3: "15.6", avg: "16.54", score: "8.00", rating: "B", status: "OK" },
-            { id: 3, parameter: "Overall Shoulder Gauge OSS", specTarget: "15.5", s1: "16.39", s2: "16.6", s3: "16.79", avg: "16.59", score: "8.00", rating: "B", status: "OK" },
-            { id: 4, parameter: "* Tread Center Rubber Gauge", specTarget: "9.2", s1: "9.93", s2: "9.86", s3: "9.43", avg: "9.74", score: "8.00", rating: "B", status: "OK" },
-            { id: 5, parameter: "* Tread shoulder Rubber gauge SS", specTarget: "8.9", s1: "9.09", s2: "9.21", s3: "8.74", avg: "9.01", score: "9.00", rating: "A", status: "OK" },
-            { id: 6, parameter: "* Tread shoulder Rubber gauge OSS", specTarget: "8.9", s1: "9.31", s2: "9.78", s3: "9.25", avg: "9.45", score: "8.00", rating: "B", status: "OK" },
-            { id: 7, parameter: "* Under Tread 1 at Center", specTarget: "2.4", s1: "3.09", s2: "2.8", s3: "2.4", avg: "2.76", score: "8.00", rating: "B", status: "OK" },
-            { id: 8, parameter: "Under Tread 2 at Shoulder SS", specTarget: "2.2", s1: "2.77", s2: "2.61", s3: "2.52", avg: "2.63", score: "7.00", rating: "C", status: "ACTION!" },
-            { id: 9, parameter: "Under Tread 2 at Shoulder OSS", specTarget: "2.2", s1: "2.77", s2: "2.79", s3: "2.45", avg: "2.67", score: "7.00", rating: "C", status: "ACTION!" },
-            { id: 10, parameter: "* Inner Liner gauge at shoulders SS", specTarget: "", s1: "", s2: "", s3: "", avg: "#DIV/0!", score: "10.00", rating: "A", status: "OK" },
-            { id: 11, parameter: "* Inner Liner gauge at shoulders OSS", specTarget: "", s1: "", s2: "", s3: "", avg: "#DIV/0!", score: "10.00", rating: "A", status: "OK" },
-            { id: 12, parameter: "* Belt 1 Width", specTarget: "90", s1: "88.08", s2: "91.22", s3: "87.89", avg: "89.06", score: "9.00", rating: "A", status: "OK" },
-            { id: 13, parameter: "* Belt 2 Width", specTarget: "80", s1: "80", s2: "78.6", s3: "81.66", avg: "80.09", score: "9.00", rating: "A", status: "OK" },
-            { id: 14, parameter: "* Belt 1 Centering SS", specTarget: "45", s1: "46.43", s2: "45.14", s3: "44.9", avg: "45.49", score: "10.00", rating: "A", status: "OK" },
-            { id: 15, parameter: "* Belt 1 Centering OSS", specTarget: "45", s1: "45.15", s2: "44.4", s3: "42.99", avg: "44.18", score: "10.00", rating: "A", status: "OK" },
-            { id: 16, parameter: "* Belt 2 Centering SS", specTarget: "40", s1: "40.36", s2: "40.23", s3: "42.25", avg: "40.95", score: "10.00", rating: "A", status: "OK" },
-            { id: 17, parameter: "* Belt 2 Centering OSS", specTarget: "40", s1: "40.09", s2: "39.88", s3: "39.41", avg: "39.79", score: "10.00", rating: "A", status: "OK" },
-            { id: 18, parameter: "Half Width of capstrip SS", specTarget: "50", s1: "47.8", s2: "50.02", s3: "48.94", avg: "48.92", score: "10.00", rating: "A", status: "OK" },
-            { id: 19, parameter: "Half Width of capstrip OSS", specTarget: "50", s1: "50.48", s2: "49.55", s3: "48.34", avg: "49.46", score: "10.00", rating: "A", status: "OK" },
-            { id: 20, parameter: "Pad Gauge SS", specTarget: "2.6", s1: "3.2", s2: "3.13", s3: "2.99", avg: "3.11", score: "9.00", rating: "A", status: "OK" },
-            { id: 21, parameter: "Pad Gauge OSS", specTarget: "2.6", s1: "2.57", s2: "2.36", s3: "2.82", avg: "2.58", score: "10.00", rating: "A", status: "OK" },
+            { id: 1, parameter: "Overall Tread Center Gauge", specTarget: "14", tolA: "±0.5", tolB: "±0.8", tolC: "±1.0", s1: "14.59", s2: "14.64", s3: "14.6", avg: "14.61", score: "8.00", rating: "B", status: "OK" },
+
+            { id: 2, parameter: "Overall Shoulder Gauge SS", specTarget: "15.5", tolA: "±0.6", tolB: "±0.9", tolC: "±1.2", s1: "16.88", s2: "17.13", s3: "15.6", avg: "16.54", score: "8.00", rating: "B", status: "OK" },
+
+            { id: 3, parameter: "Overall Shoulder Gauge OSS", specTarget: "15.5", tolA: "±0.6", tolB: "±0.9", tolC: "±1.2", s1: "16.39", s2: "16.6", s3: "16.79", avg: "16.59", score: "8.00", rating: "B", status: "OK" },
+
+            { id: 4, parameter: "* Tread Center Rubber Gauge", specTarget: "9.2", tolA: "±0.3", tolB: "±0.5", tolC: "±0.7", s1: "9.93", s2: "9.86", s3: "9.43", avg: "9.74", score: "8.00", rating: "B", status: "OK" },
+
+            { id: 5, parameter: "* Tread shoulder Rubber gauge SS", specTarget: "8.9", tolA: "±0.3", tolB: "±0.5", tolC: "±0.7", s1: "9.09", s2: "9.21", s3: "8.74", avg: "9.01", score: "9.00", rating: "A", status: "OK" },
+
+            { id: 6, parameter: "* Tread shoulder Rubber gauge OSS", specTarget: "8.9", tolA: "±0.3", tolB: "±0.5", tolC: "±0.7", s1: "9.31", s2: "9.78", s3: "9.25", avg: "9.45", score: "8.00", rating: "B", status: "OK" },
+
+            { id: 7, parameter: "* Under Tread 1 at Center", specTarget: "2.4", tolA: "±0.2", tolB: "±0.4", tolC: "±0.6", s1: "3.09", s2: "2.8", s3: "2.4", avg: "2.76", score: "8.00", rating: "B", status: "OK" },
+
+            { id: 8, parameter: "Under Tread 2 at Shoulder SS", specTarget: "2.2", tolA: "±0.2", tolB: "±0.4", tolC: "±0.6", s1: "2.77", s2: "2.61", s3: "2.52", avg: "2.63", score: "7.00", rating: "C", status: "ACTION!" },
+
+            { id: 9, parameter: "Under Tread 2 at Shoulder OSS", specTarget: "2.2", tolA: "±0.2", tolB: "±0.4", tolC: "±0.6", s1: "2.77", s2: "2.79", s3: "2.45", avg: "2.67", score: "7.00", rating: "C", status: "ACTION!" },
+
+            { id: 10, parameter: "* Inner Liner gauge at shoulders SS", specTarget: "", tolA: "", tolB: "", tolC: "", s1: "", s2: "", s3: "", avg: "#DIV/0!", score: "10.00", rating: "A", status: "OK" },
+
+            { id: 11, parameter: "* Inner Liner gauge at shoulders OSS", specTarget: "", tolA: "", tolB: "", tolC: "", s1: "", s2: "", s3: "", avg: "#DIV/0!", score: "10.00", rating: "A", status: "OK" },
+
+            { id: 12, parameter: "* Belt 1 Width", specTarget: "90", tolA: "±1.0", tolB: "±1.5", tolC: "±2.0", s1: "88.08", s2: "91.22", s3: "87.89", avg: "89.06", score: "9.00", rating: "A", status: "OK" },
+
+            { id: 13, parameter: "* Belt 2 Width", specTarget: "80", tolA: "±1.0", tolB: "±1.5", tolC: "±2.0", s1: "80", s2: "78.6", s3: "81.66", avg: "80.09", score: "9.00", rating: "A", status: "OK" },
+
+            { id: 14, parameter: "* Belt 1 Centering SS", specTarget: "45", tolA: "±0.8", tolB: "±1.2", tolC: "±1.6", s1: "46.43", s2: "45.14", s3: "44.9", avg: "45.49", score: "10.00", rating: "A", status: "OK" },
+
+            { id: 15, parameter: "* Belt 1 Centering OSS", specTarget: "45", tolA: "±0.8", tolB: "±1.2", tolC: "±1.6", s1: "45.15", s2: "44.4", s3: "42.99", avg: "44.18", score: "10.00", rating: "A", status: "OK" },
+
+            { id: 16, parameter: "* Belt 2 Centering SS", specTarget: "40", tolA: "±0.8", tolB: "±1.2", tolC: "±1.6", s1: "40.36", s2: "40.23", s3: "42.25", avg: "40.95", score: "10.00", rating: "A", status: "OK" },
+
+            { id: 17, parameter: "* Belt 2 Centering OSS", specTarget: "40", tolA: "±0.8", tolB: "±1.2", tolC: "±1.6", s1: "40.09", s2: "39.88", s3: "39.41", avg: "39.79", score: "10.00", rating: "A", status: "OK" },
+
+            { id: 18, parameter: "Half Width of capstrip SS", specTarget: "50", tolA: "±1.0", tolB: "±1.5", tolC: "±2.0", s1: "47.8", s2: "50.02", s3: "48.94", avg: "48.92", score: "10.00", rating: "A", status: "OK" },
+
+            { id: 19, parameter: "Half Width of capstrip OSS", specTarget: "50", tolA: "±1.0", tolB: "±1.5", tolC: "±2.0", s1: "50.48", s2: "49.55", s3: "48.34", avg: "49.46", score: "10.00", rating: "A", status: "OK" },
+
+            { id: 20, parameter: "Pad Gauge SS", specTarget: "2.6", tolA: "±0.2", tolB: "±0.4", tolC: "±0.6", s1: "3.2", s2: "3.13", s3: "2.99", avg: "3.11", score: "9.00", rating: "A", status: "OK" },
+
+            { id: 21, parameter: "Pad Gauge OSS", specTarget: "2.6", tolA: "±0.2", tolB: "±0.4", tolC: "±0.6", s1: "2.57", s2: "2.36", s3: "2.82", avg: "2.58", score: "10.00", rating: "A", status: "OK" },
         ];
+
 
         const offParameterReports = [
             {
@@ -1476,18 +1575,25 @@ tbody.innerHTML = `
                                         <div className="grid grid-cols-2 border-b border-gray-300"><div className="bg-blue-700 text-white p-1 font-semibold">Barcode :</div><div className="p-1 text-center">1046891088</div></div>
                                         <div className="grid grid-cols-2 border-b border-gray-300"><div className="bg-blue-700 text-white p-1 font-semibold">Week code:</div><div className="p-1 text-center">4825</div></div>
                                     </div>
-                                    <div className="col-span-3 bg-[#92d050] border-r border-gray-400 flex flex-col items-center justify-center">
-                                        <div className="text-white font-bold bg-purple-700 w-full text-center py-0.5 mb-1">TYRE GRADE</div>
-                                        <div className="text-5xl font-black text-black">B</div>
-                                    </div>
+                            <div className="col-span-3 bg-[#92d050] border-r border-gray-400 flex flex-col items-center justify-center">
+                                <div className="text-white font-bold bg-purple-700 w-full text-center py-0.5 mb-1">
+                                    TYRE GRADE
+                                </div>
+
+                                <div className="text-5xl font-black text-black leading-none">B</div>
+
+                                {/* GOOD below B */}
+                                <div className="mt-1 text-lg font-bold text-black">
+                                    GOOD
+                                </div>
+                            </div>
+
                                     <div className="col-span-3 bg-[#00b050] flex flex-col items-center justify-center">
                                         <div className="text-white font-bold bg-purple-700 w-full text-center py-0.5 mb-1">TYRE RATING</div>
                                         <div className="text-xl font-bold text-black">91.19%</div>
                                     </div>
                                 </div>
-                                <div className="bg-[#92d050] border-t border-gray-400 text-center font-bold text-lg py-1">
-                                    GOOD
-                                </div>
+
                             </div>
                         </div>
 
@@ -1497,8 +1603,22 @@ tbody.innerHTML = `
                                 <tr className="bg-blue-900 text-white text-center">
                                     <th className="border border-gray-400 py-1 w-8">Sr No</th>
                                     <th className="border border-gray-400 py-1 text-left px-2">Parameters</th>
-                                    <th className="border border-gray-400 py-1 w-12 bg-yellow-600/50 text-yellow-100">Spec Target</th>
+                                    <th className="border border-gray-400 py-1 w-12 bg-yellow-600/50 text-yellow-100">
+                                        Spec Target
+                                    </th>
+
+                                    <th className="border border-gray-400 py-1 w-14 bg-gray-700 text-white">
+                                        Tol A
+                                    </th>
+                                    <th className="border border-gray-400 py-1 w-14 bg-gray-700 text-white">
+                                        Tol B
+                                    </th>
+                                    <th className="border border-gray-400 py-1 w-14 bg-gray-700 text-white">
+                                        Tol C
+                                    </th>
+
                                     <th className="border border-gray-400 py-1 w-16">Section 1</th>
+
                                     <th className="border border-gray-400 py-1 w-16">Section 2</th>
                                     <th className="border border-gray-400 py-1 w-16">Section 3</th>
                                     <th className="border border-gray-400 py-1 w-16 bg-blue-800">Average</th>
@@ -1528,8 +1648,44 @@ tbody.innerHTML = `
                                         <tr key={row.id} className={rowClass}>
                                             <td className="border border-gray-300 py-0.5">{row.id}</td>
                                             <td className={`border border-gray-300 px-2 text-left ${row.parameter.includes('*') ? 'font-bold' : ''}`}>{row.parameter}</td>
-                                            <td className={`border border-gray-300 ${targetClass}`}>{row.specTarget}</td>
-                                            <td className={`border border-gray-300 ${row.s1 === '3.09' ? 'text-red-600 font-bold bg-red-50' : ''}`}>{row.s1}</td>
+                                            <td className={`border border-gray-300 ${targetClass}`}>
+                                                {row.specTarget}
+                                            </td>
+
+                                            {/* Tolerance A */}
+                                            <td className="border border-gray-300 px-1">
+                                                <input
+                                                    type="text"
+                                                    value={row.tolA || ''}
+                                                    className="w-full text-center border border-gray-300 rounded text-[9px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                    onChange={(e) => handleToleranceChange(row.id, 'tolA', e.target.value)}
+                                                />
+                                            </td>
+
+                                            {/* Tolerance B */}
+                                            <td className="border border-gray-300 px-1">
+                                                <input
+                                                    type="text"
+                                                    value={row.tolB || ''}
+                                                    className="w-full text-center border border-gray-300 rounded text-[9px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                    onChange={(e) => handleToleranceChange(row.id, 'tolB', e.target.value)}
+                                                />
+                                            </td>
+
+                                            {/* Tolerance C */}
+                                            <td className="border border-gray-300 px-1">
+                                                <input
+                                                    type="text"
+                                                    value={row.tolC || ''}
+                                                    className="w-full text-center border border-gray-300 rounded text-[9px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                    onChange={(e) => handleToleranceChange(row.id, 'tolC', e.target.value)}
+                                                />
+                                            </td>
+
+                                            <td className={`border border-gray-300 ${row.s1 === '3.09' ? 'text-red-600 font-bold bg-red-50' : ''}`}>
+                                                {row.s1}
+                                            </td>
+
                                             <td className="border border-gray-300">{row.s2}</td>
                                             <td className="border border-gray-300">{row.s3}</td>
                                             <td className="border border-gray-300 bg-blue-50">{row.avg}</td>
